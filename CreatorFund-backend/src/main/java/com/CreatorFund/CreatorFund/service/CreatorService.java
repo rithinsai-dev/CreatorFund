@@ -14,6 +14,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -88,19 +90,31 @@ public class CreatorService {
         );
     }
 
+    @Transactional(readOnly = true)
     public List<Map<String, Object>> getCreatorContent(Long creatorId) {
         User creator = resolveCreator(creatorId);
-        return digitalContentRepository.findByCreatedBy(creator).stream()
-                .map(c -> Map.<String, Object>of(
-                        "id",         c.getId(),
-                        "title",      c.getTitle(),
-                        "type",       c.getContentType().name().toLowerCase(),
-                        "price",      c.getPrice() != null ? c.getPrice() : BigDecimal.ZERO,
-                        "status",     c.getContentStatus().name().toLowerCase(),
-                        "salesCount", c.getSalesCount() != null ? c.getSalesCount() : 0,
-                        "targetQty",  c.getTargetQty() != null ? c.getTargetQty() : 0
-                ))
-                .collect(Collectors.toList());
+        Map<Long, Map<String, Object>> contentById = new LinkedHashMap<>();
+
+        contentRightsRepository.findByRightsOwnerAndRightsStatus(creator, ContentRights.RightsStatus.ACTIVE)
+                .stream()
+                .sorted(Comparator.comparing(ContentRights::getCreatedAt, Comparator.nullsLast(Comparator.reverseOrder())))
+                .forEach(rights -> {
+                    DigitalContent content = rights.getDigitalContent();
+                    contentById.put(content.getId(), Map.<String, Object>of(
+                            "id",                  content.getId(),
+                            "title",               content.getTitle(),
+                            "type",                content.getContentType().name().toLowerCase(),
+                            "price",               content.getPrice() != null ? content.getPrice() : BigDecimal.ZERO,
+                            "status",              content.getContentStatus().name().toLowerCase(),
+                            "salesCount",          content.getSalesCount() != null ? content.getSalesCount() : 0,
+                            "targetQty",           content.getTargetQty() != null ? content.getTargetQty() : 0,
+                            "ownershipPercentage", rights.getOwnershipPercentage(),
+                            "creatorName",         content.getCreatedBy().getName(),
+                            "isOriginalCreator",   content.getCreatedBy().getId().equals(creator.getId())
+                    ));
+                });
+
+        return contentById.values().stream().toList();
     }
 
     @Transactional(readOnly = true)

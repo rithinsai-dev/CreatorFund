@@ -12,6 +12,8 @@ import java.util.Optional;
 @Repository
 public interface ContentRightsRepository extends JpaRepository<ContentRights, Long> {
     List<ContentRights> findByDigitalContentAndRightsStatus(DigitalContent content, ContentRights.RightsStatus status);
+
+    List<ContentRights> findByRightsOwnerAndRightsStatus(User owner, ContentRights.RightsStatus status);
     
     Optional<ContentRights> findByDigitalContentAndRightsOwnerAndRightsStatus(
             DigitalContent content, User owner, ContentRights.RightsStatus status);
