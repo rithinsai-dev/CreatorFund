@@ -1,51 +1,78 @@
-import { allContent, myOrders, creators, requests } from './mockData';
-
-// To connect to a Java Backend later, replace these mock delays with standard fetch calls
-// Ex: export const getCreators = async () => (await fetch('http://localhost:8080/api/creators/')).json();
-
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const BASE_URL = 'http://localhost:8080/api';
 
 export const api = {
-  // Common
+  // Common - Auth
   login: async (email, password, role) => {
-    await delay(300);
-    // Simulating token return. Later replace with real backend call.
-    return { token: 'mock-jwt-token', user: { name: 'Test User', role, email } };
+    const res = await fetch(`${BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, role })
+    });
+    if (!res.ok) throw new Error('Login failed');
+    return { user: await res.json() };
   },
+
   register: async (name, email, password, role) => {
-    await delay(300);
-    // Simulate successful registration and auto-login
-    return { token: 'mock-jwt-token', user: { name, role, email } };
+    const res = await fetch(`${BASE_URL}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password, role })
+    });
+    if (!res.ok) throw new Error('Registration failed');
+    return { user: await res.json() };
   },
 
   // Admin
   getDashboardStats: async () => {
-    await delay(300);
-    const platformRevenue = 15000; // Mock 
-    const activeCreators = creators.filter(c => c.status === 'active').length;
-    const pendingRequests = requests.length;
-    return { platformRevenue, activeCreators, pendingRequests };
+    const res = await fetch(`${BASE_URL}/admin/dashboard-stats`);
+    return await res.json();
   },
   getCreators: async () => {
-    await delay(300);
-    return creators;
+    const res = await fetch(`${BASE_URL}/admin/creators`);
+    return await res.json();
   },
   getRequests: async () => {
-    await delay(300);
-    return requests;
+    const res = await fetch(`${BASE_URL}/admin/requests`);
+    return await res.json();
   },
 
   // Creator
   getCreatorDashboardStats: async () => {
-    await delay(300);
-    return { totalViews: 12500, totalSales: 350, earnings: 45000 };
+    const res = await fetch(`${BASE_URL}/creator/stats`);
+    return await res.json();
   },
   getCreatorContent: async () => {
-    await delay(300);
-    return allContent.filter(c => c.creatorName === 'Alice'); // Mocking specific user
+    const res = await fetch(`${BASE_URL}/creator/content`);
+    return await res.json();
   },
   submitContent: async (data) => {
-    await delay(500);
-    return { success: true };
+    const res = await fetch(`${BASE_URL}/creator/content`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return await res.json();
+  },
+
+  // Distributor
+  getDistDashboardStats: async () => {
+    const res = await fetch(`${BASE_URL}/distributor/dashboard-stats`);
+    return await res.json();
+  },
+  getPurchases: async () => {
+    const res = await fetch(`${BASE_URL}/distributor/purchases`);
+    return await res.json();
+  },
+  getMarketplace: async () => {
+    const res = await fetch(`${BASE_URL}/distributor/marketplace`);
+    return await res.json();
+  },
+  purchaseContent: async (contentId, paymentDetails) => {
+    const res = await fetch(`${BASE_URL}/distributor/purchase`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contentId, paymentDetails })
+    });
+    return await res.json();
   }
 };

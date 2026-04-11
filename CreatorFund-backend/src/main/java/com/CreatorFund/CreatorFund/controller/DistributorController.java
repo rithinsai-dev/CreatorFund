@@ -37,9 +37,9 @@ public class DistributorController {
     public ResponseEntity<List<Map<String, Object>>> getMarketplace() {
         // TODO: Replace with DistributorService.getAvailableContent()
         return ResponseEntity.ok(List.of(
-                Map.of("id", 1, "title", "Learn React Hooks", "type", "course", "price", 999, "status", "active", "creatorName", "Alice", "salesCount", 50, "targetQty", 100),
-                Map.of("id", 2, "title", "Tech Review Video", "type", "video", "price", 499, "status", "active", "creatorName", "Bob", "salesCount", 120, "targetQty", 200),
-                Map.of("id", 3, "title", "Lo-Fi Beats", "type", "music", "price", 199, "status", "active", "creatorName", "Charlie", "salesCount", 300, "targetQty", 500)
+                Map.of("id", 1, "title", "Learn React Hooks", "type", "course", "price", 999, "status", "active", "creatorName", "sai", "salesCount", 50, "targetQty", 100),
+                Map.of("id", 2, "title", "Tech Review Video", "type", "video", "price", 499, "status", "active", "creatorName", "Rithin", "salesCount", 120, "targetQty", 200),
+                Map.of("id", 3, "title", "Lo-Fi Beats", "type", "music", "price", 199, "status", "active", "creatorName", "idk", "salesCount", 300, "targetQty", 500)
         ));
     }
 

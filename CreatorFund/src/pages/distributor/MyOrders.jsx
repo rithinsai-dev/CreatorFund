@@ -1,5 +1,13 @@
-import { myOrders } from '../../data/mockData'
+import { useEffect, useState } from 'react';
+import { api } from '../../data/api';
+
 export default function MyOrders() {
+  const [myOrders, setMyOrders] = useState([]);
+
+  useEffect(() => {
+    api.getPurchases().then(setMyOrders);
+  }, []);
+
   return (
     <div className="fade-in">
       <div className="page-header">
@@ -17,9 +25,9 @@ export default function MyOrders() {
                     <td style={{fontWeight:600}}>{o.contentTitle}</td>
                     <td><span className={`badge ${o.type==='music'?'purple':o.type==='video'?'red':o.type==='article'?'amber':'green'}`}>{o.type}</span></td>
                     <td>₹{o.amount}</td>
-                    <td style={{fontFamily:'var(--font-mono)',fontSize:11,color:'var(--cyan)'}}>{o.licenseKey || '—'}</td>
+                    <td style={{fontFamily:'var(--mono)',fontSize:11,color:'var(--cyan)'}}>{o.licenseKey || '—'}</td>
                     <td><span className={`badge ${o.status==='completed'?'green':'red'}`}>{o.status}</span></td>
-                    <td style={{color:'var(--muted)'}}>{o.date}</td>
+                    <td style={{color:'var(--text-muted)'}}>{o.date}</td>
                   </tr>
                 ))}
               </tbody>
