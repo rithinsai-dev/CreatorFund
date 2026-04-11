@@ -39,6 +39,7 @@ public class RightsService {
         this.userRepository = userRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<Map<String, Object>> getActiveRights(Long contentId) {
         DigitalContent content = digitalContentRepository.findById(contentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Content not found"));
@@ -47,13 +48,32 @@ public class RightsService {
                 .map(r -> Map.<String, Object>of(
                         "ownerName",  r.getRightsOwner().getName(),
                         "ownerEmail", r.getRightsOwner().getEmail(),
-                        "percentage", r.getOwnershipPercentage()
+                        "percentage", r.getOwnershipPercentage(),
+                        "status",     r.getRightsStatus().name().toLowerCase()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> getTransferHistory(Long contentId) {
+        DigitalContent content = digitalContentRepository.findById(contentId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Content not found"));
+
+        return rightsTransferRepository.findByDigitalContentOrderByTransferDateDesc(content).stream()
+                .map(t -> Map.<String, Object>of(
+                        "id",               t.getId(),
+                        "fromName",         t.getPreviousOwner().getName(),
+                        "fromEmail",        t.getPreviousOwner().getEmail(),
+                        "toName",           t.getNewOwner().getName(),
+                        "toEmail",          t.getNewOwner().getEmail(),
+                        "percentage",       t.getTransferPercentage(),
+                        "date",             t.getTransferDate().toLocalDate().toString()
                 ))
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public void transferRights(Long contentId, Long fromUserId, String toEmail, BigDecimal percentage) {
+    public Map<String, Object> transferRights(Long contentId, Long fromUserId, String toEmail, BigDecimal percentage) {
         DigitalContent content = digitalContentRepository.findById(contentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Content not found"));
 
@@ -96,7 +116,7 @@ public class RightsService {
         }
         contentRightsRepository.save(senderRights);
 
-        // Add to recipient
+        // Add to recipient — create new record or update existing active record
         ContentRights recipientRights = contentRightsRepository.findByDigitalContentAndRightsOwnerAndRightsStatus(
                 content, toUser, ContentRights.RightsStatus.ACTIVE)
                 .orElse(ContentRights.builder()
@@ -120,5 +140,13 @@ public class RightsService {
                 .build();
 
         rightsTransferRepository.save(transfer);
+
+        return Map.of(
+                "success", true,
+                "fromName", fromUser.getName(),
+                "toName", toUser.getName(),
+                "percentage", percentage,
+                "remainingPercentage", remainingPercentage
+        );
     }
 }

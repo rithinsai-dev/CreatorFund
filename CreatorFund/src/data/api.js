@@ -78,6 +78,10 @@ export const api = {
     const res = await fetch(`${BASE_URL}/rights/content/${contentId}`);
     return await res.json();
   },
+  getTransferHistory: async (contentId) => {
+    const res = await fetch(`${BASE_URL}/rights/content/${contentId}/history`);
+    return await res.json();
+  },
   transferRights: async (contentId, toEmail, percentage) => {
     const userId = getUserId();
     const res = await fetch(`${BASE_URL}/rights/transfer?contentId=${contentId}&fromUserId=${userId}&toEmail=${toEmail}&percentage=${percentage}`, {

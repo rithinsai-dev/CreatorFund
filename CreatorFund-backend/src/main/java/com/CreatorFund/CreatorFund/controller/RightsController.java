@@ -26,6 +26,11 @@ public class RightsController {
         return ResponseEntity.ok(rightsService.getActiveRights(id));
     }
 
+    @GetMapping("/content/{id}/history")
+    public ResponseEntity<List<Map<String, Object>>> getTransferHistory(@PathVariable Long id) {
+        return ResponseEntity.ok(rightsService.getTransferHistory(id));
+    }
+
     @PostMapping("/transfer")
     public ResponseEntity<Map<String, Object>> transferRights(
             @RequestParam Long contentId,
@@ -33,8 +38,8 @@ public class RightsController {
             @RequestParam String toEmail,
             @RequestParam BigDecimal percentage) {
         try {
-            rightsService.transferRights(contentId, fromUserId, toEmail, percentage);
-            return ResponseEntity.ok(Map.of("success", true));
+            Map<String, Object> result = rightsService.transferRights(contentId, fromUserId, toEmail, percentage);
+            return ResponseEntity.ok(result);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
         }
