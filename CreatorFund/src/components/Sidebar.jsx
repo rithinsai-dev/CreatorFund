@@ -17,8 +17,7 @@ const NAV_ITEMS = {
   distributor: [
     { id: 'dashboard', label: 'Dashboard' },
     { id: 'marketplace', label: 'Marketplace' },
-    { id: 'orders', label: 'My Orders' },
-    { id: 'purchase', label: 'Purchase License' }
+    { id: 'orders', label: 'My Orders' }
   ]
 };
 

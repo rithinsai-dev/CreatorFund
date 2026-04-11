@@ -7,6 +7,11 @@ export default function Marketplace() {
   const [active, setActive] = useState([]);
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
+  
+  // Checkout states
+  const [checkoutItem, setCheckoutItem] = useState(null)
+  const [paid, setPaid] = useState(false)
+  const [license, setLicense] = useState('')
 
   useEffect(() => {
     api.getMarketplace().then(data => setActive(data.filter(c => c.status === 'active')));
@@ -16,6 +21,73 @@ export default function Marketplace() {
     (filter === 'all' || c.type === filter) &&
     c.title.toLowerCase().includes(search.toLowerCase())
   );
+
+  const handlePurchase = async () => {
+    try {
+      const res = await api.purchaseContent(checkoutItem.id, "CARD_XYZ");
+      if (res.success) {
+        setLicense(res.licenseKey);
+        setPaid(true);
+      }
+    } catch {
+      alert("Purchase failed");
+    }
+  }
+
+  if (paid) {
+    return (
+      <div className="fade-in">
+        <div className="page-header"><div className="page-title">Checkout</div></div>
+        <div className="page-body">
+          <div className="card" style={{maxWidth:480,textAlign:'center'}}>
+            <div style={{fontSize:56,marginBottom:16}}>🎉</div>
+            <div style={{fontSize:22,fontWeight:800,marginBottom:8}}>Payment Successful!</div>
+            <div style={{color:'var(--text-muted)',fontSize:13,marginBottom:8}}>You now own the license for <strong style={{color:'var(--text)'}}>{checkoutItem?.title}</strong>.</div>
+            <div style={{background:'var(--bg)',border:'1px solid var(--border)',borderRadius:6,padding:'12px 16px',fontSize:12,marginBottom:24}}>
+              License Key: <strong style={{color:'var(--cyan)',fontFamily:'var(--mono)'}}>{license}</strong>
+            </div>
+            <button className="btn btn-primary" onClick={() => { setPaid(false); setCheckoutItem(null) }}>Return to Marketplace</button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (checkoutItem) {
+    return (
+      <div className="fade-in">
+        <div className="page-header">
+          <div style={{display: 'flex', alignItems: 'center', gap: 15}}>
+            <button className="btn btn-sm" onClick={() => setCheckoutItem(null)}>← Back</button>
+            <div className="page-title">Checkout</div>
+          </div>
+        </div>
+        <div className="page-body">
+          <div className="card fade-in" style={{maxWidth: 400}}>
+            <div style={{fontSize:18,fontWeight:800,marginBottom:4}}>{checkoutItem.title}</div>
+            <div style={{color:'var(--text-muted)',fontSize:12,marginBottom:20}}>by {checkoutItem.creatorName}</div>
+            <div style={{borderTop:'1px solid var(--border)',paddingTop:16,marginBottom:16}}>
+              <div style={{display:'flex',justifyContent:'space-between',marginBottom:8,fontSize:13}}>
+                <span style={{color:'var(--text-muted)'}}>Content price</span><span>₹{checkoutItem.price}</span>
+              </div>
+              <div style={{display:'flex',justifyContent:'space-between',marginBottom:8,fontSize:13}}>
+                <span style={{color:'var(--text-muted)'}}>Platform fee</span><span>₹0</span>
+              </div>
+              <div style={{display:'flex',justifyContent:'space-between',fontWeight:800,fontSize:18,color:'var(--cyan)',paddingTop:12,borderTop:'1px solid var(--border)'}}>
+                <span>Total</span><span>₹{checkoutItem.price}</span>
+              </div>
+            </div>
+            <div className="form-group"><label>Payment Method</label>
+              <select><option>UPI</option><option>Card</option><option>Net Banking</option></select>
+            </div>
+            <button className="btn btn-primary" style={{width:'100%'}} onClick={handlePurchase}>
+              Pay ₹{checkoutItem.price}
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="fade-in">
@@ -46,6 +118,7 @@ export default function Marketplace() {
               <div className="content-price" style={{color:'var(--cyan)'}}>₹{c.price}</div>
               <div className="content-footer">
                 <span style={{fontSize:11,color:'var(--text-muted)'}}>{c.salesCount}/{c.targetQty} sold</span>
+                <button className="btn btn-primary btn-sm" onClick={() => setCheckoutItem(c)}>Buy License</button>
               </div>
             </div>
           ))}

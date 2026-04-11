@@ -21,12 +21,11 @@ import SubmitContent from './pages/creator/SubmitContent'
 import DistDashboard from './pages/distributor/DistDashboard'
 import Marketplace from './pages/distributor/Marketplace'
 import MyOrders from './pages/distributor/MyOrders'
-import PurchaseContent from './pages/distributor/PurchaseContent'
 
 const PAGES = {
   admin: { dashboard: AdminDashboard, requests: AdminRequests, creators: AdminCreators, 'creator-revenue': AdminCreatorRevenue, 'platform-revenue': AdminPlatformRevenue },
   creator: { dashboard: CreatorDashboard, 'my-content': MyContent, revenue: CreatorRevenue, submit: SubmitContent },
-  distributor: { dashboard: DistDashboard, marketplace: Marketplace, orders: MyOrders, purchase: PurchaseContent },
+  distributor: { dashboard: DistDashboard, marketplace: Marketplace, orders: MyOrders },
 }
 
 function Shell() {
