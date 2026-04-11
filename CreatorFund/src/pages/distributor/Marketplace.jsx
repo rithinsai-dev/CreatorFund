@@ -149,9 +149,20 @@ export default function Marketplace() {
               <div className="content-meta">by {c.creatorName}</div>
               <div className="content-price" style={{color:'var(--cyan)'}}>₹{parseFloat(c.price || 0).toLocaleString()}</div>
               <div className="content-footer">
-                <span style={{fontSize:11,color:'var(--text-muted)'}}>{c.salesCount}/{c.targetQty} sold</span>
-                <button className="btn btn-primary btn-sm" onClick={() => beginCheckout(c)}>Buy License</button>
-              </div>
+  <span style={{fontSize:11,color:'var(--text-muted)'}}>{c.salesCount}/{c.targetQty} sold</span>
+  <button
+    className={`btn btn-sm ${c.salesCount < c.targetQty ? 'btn-primary' : ''}`}
+    onClick={() => c.salesCount < c.targetQty && beginCheckout(c)}
+    disabled={c.salesCount >= c.targetQty}
+    style={{
+      background: c.salesCount >= c.targetQty ? 'var(--border)' : '',
+      color: c.salesCount >= c.targetQty ? 'var(--text-muted)' : '',
+      cursor: c.salesCount >= c.targetQty ? 'not-allowed' : 'pointer',
+    }}
+  >
+    {c.salesCount >= c.targetQty ? 'Sold Out' : 'Buy License'}
+  </button>
+</div>
             </div>
           ))}
         </div>
