@@ -7,11 +7,13 @@ export default function Marketplace() {
   const [active, setActive] = useState([]);
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
-  
+
   // Checkout states
-  const [checkoutItem, setCheckoutItem] = useState(null)
-  const [paid, setPaid] = useState(false)
-  const [license, setLicense] = useState('')
+  const [checkoutItem, setCheckoutItem] = useState(null);
+  const [paid, setPaid] = useState(false);
+  const [license, setLicense] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('UPI');
+  const [usageType, setUsageType] = useState('DOWNLOAD');
 
   useEffect(() => {
     api.getMarketplace()
@@ -26,7 +28,7 @@ export default function Marketplace() {
 
   const handlePurchase = async () => {
     try {
-      const res = await api.purchaseContent(checkoutItem.id, "CARD_XYZ");
+      const res = await api.purchaseContent(checkoutItem.id, paymentMethod, usageType);
       if (res.success) {
         setLicense(res.licenseKey);
         setPaid(true);
@@ -40,7 +42,15 @@ export default function Marketplace() {
     } catch {
       alert("Purchase failed");
     }
-  }
+  };
+
+  const beginCheckout = (content) => {
+    setCheckoutItem(content);
+    setPaid(false);
+    setLicense('');
+    setPaymentMethod('UPI');
+    setUsageType('DOWNLOAD');
+  };
 
   if (paid) {
     return (
@@ -85,8 +95,22 @@ export default function Marketplace() {
                 <span>Total</span><span>₹{checkoutItem.price}</span>
               </div>
             </div>
-            <div className="form-group"><label>Payment Method</label>
-              <select><option>UPI</option><option>Card</option><option>Net Banking</option></select>
+            <div className="form-group">
+              <label>Payment Method</label>
+              <select value={paymentMethod} onChange={e => setPaymentMethod(e.target.value)}>
+                <option value="UPI">UPI</option>
+                <option value="CARD">Card</option>
+                <option value="NET_BANKING">Net Banking</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Purchase Purpose</label>
+              <select value={usageType} onChange={e => setUsageType(e.target.value)}>
+                <option value="STREAM">Stream</option>
+                <option value="DOWNLOAD">Download</option>
+                <option value="VIEW">View</option>
+                <option value="SUBSCRIPTION_ACCESS">Subscription Access</option>
+              </select>
             </div>
             <button className="btn btn-primary" style={{width:'100%'}} onClick={handlePurchase}>
               Pay ₹{checkoutItem.price}
@@ -126,7 +150,7 @@ export default function Marketplace() {
               <div className="content-price" style={{color:'var(--cyan)'}}>₹{parseFloat(c.price || 0).toLocaleString()}</div>
               <div className="content-footer">
                 <span style={{fontSize:11,color:'var(--text-muted)'}}>{c.salesCount}/{c.targetQty} sold</span>
-                <button className="btn btn-primary btn-sm" onClick={() => setCheckoutItem(c)}>Buy License</button>
+                <button className="btn btn-primary btn-sm" onClick={() => beginCheckout(c)}>Buy License</button>
               </div>
             </div>
           ))}

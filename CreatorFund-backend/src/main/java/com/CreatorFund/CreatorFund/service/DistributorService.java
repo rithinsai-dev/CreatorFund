@@ -102,6 +102,10 @@ public class DistributorService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Content and distributor are required");
         }
 
+        if (request.usageType() == null || request.usageType().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usage type is required");
+        }
+
         DigitalContent content = digitalContentRepository.findById(request.contentId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Content not found"));
 
@@ -116,13 +120,20 @@ public class DistributorService {
         }
 
         User distributor = resolveDistributor(request.distributorId());
+        UsageTransaction.UsageType usageType;
+
+        try {
+            usageType = UsageTransaction.UsageType.valueOf(request.usageType().trim().toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid usage type");
+        }
 
         String licenseKey = "LIC-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
 
         UsageTransaction transaction = UsageTransaction.builder()
                 .digitalContent(content)
                 .distributor(distributor)
-                .usageType(UsageTransaction.UsageType.DOWNLOAD)
+                .usageType(usageType)
                 .usageCount(1)
                 .revenueGenerated(content.getPrice() != null ? content.getPrice() : BigDecimal.ZERO)
                 .transactionStatus(UsageTransaction.TransactionStatus.RECORDED)

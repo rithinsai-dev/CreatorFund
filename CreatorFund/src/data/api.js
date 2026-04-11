@@ -119,12 +119,12 @@ export const api = {
     const res = await fetch(`${BASE_URL}/distributor/marketplace`);
     return await res.json();
   },
-  purchaseContent: async (contentId, paymentDetails) => {
+  purchaseContent: async (contentId, paymentDetails, usageType) => {
     const userId = getUserId();
     const res = await fetch(`${BASE_URL}/distributor/purchase`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contentId, paymentDetails, distributorId: userId })
+      body: JSON.stringify({ contentId, paymentDetails, usageType, distributorId: userId })
     });
     return await res.json();
   }

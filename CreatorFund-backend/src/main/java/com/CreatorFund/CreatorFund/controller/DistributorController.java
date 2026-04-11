@@ -20,7 +20,7 @@ public class DistributorController {
         this.distributorService = distributorService;
     }
 
-    public record PurchaseRequest(Long contentId, String paymentDetails, Long distributorId) {}
+    public record PurchaseRequest(Long contentId, String paymentDetails, String usageType, Long distributorId) {}
 
     @GetMapping("/dashboard-stats")
     public ResponseEntity<Map<String, Object>> getDashboardStats(
