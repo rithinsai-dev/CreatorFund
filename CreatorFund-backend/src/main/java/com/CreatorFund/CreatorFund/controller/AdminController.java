@@ -50,4 +50,9 @@ public class AdminController {
     public ResponseEntity<Map<String, Object>> processPayout(@RequestParam Long creatorId) {
         return ResponseEntity.ok(adminService.processPayout(creatorId));
     }
+
+    @GetMapping("/recent-transactions")
+    public ResponseEntity<List<Map<String, Object>>> getRecentTransactions() {
+        return ResponseEntity.ok(adminService.getRecentTransactions());
+    }
 }

@@ -12,6 +12,7 @@ import java.util.List;
 @Repository
 public interface RoyaltyCalculationRepository extends JpaRepository<RoyaltyCalculation, Long> {
     List<RoyaltyCalculation> findByRoyaltyOwner(User owner);
+    List<RoyaltyCalculation> findByRoyaltyOwnerOrderByCalculationDateDesc(User owner);
 
     List<RoyaltyCalculation> findByRoyaltyOwnerAndCalculationStatus(User owner, RoyaltyCalculation.CalculationStatus status);
     

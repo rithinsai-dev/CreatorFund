@@ -31,13 +31,14 @@ export default function CreatorRevenue() {
           <div className="stat-value" style={{color: 'var(--green)'}}>
             ₹{parseFloat(stats.earnings || 0).toLocaleString()}
           </div>
+          <p style={{fontSize: 12, color: 'var(--text-muted)', marginTop: 8}}>After 3% platform fee</p>
         </div>
         <div className="stat-card" style={{borderLeft: '4px solid var(--amber)'}}>
           <div className="stat-label">Pending Payouts</div>
           <div className="stat-value">
-            ₹{(parseFloat(stats.earnings || 0) * 0.9).toLocaleString()}
+            ₹{parseFloat(stats.pendingPayout || 0).toLocaleString()}
           </div>
-          <p style={{fontSize: 12, color: 'var(--text-muted)', marginTop: 8}}>After platform service fees</p>
+          <p style={{fontSize: 12, color: 'var(--text-muted)', marginTop: 8}}>Awaiting admin approval</p>
         </div>
       </div>
 
@@ -49,19 +50,23 @@ export default function CreatorRevenue() {
               <tr>
                 <th>Date</th>
                 <th>Content</th>
-                <th>Amount</th>
+                <th>Revenue</th>
+                <th>Royalty %</th>
+                <th>Earned</th>
                 <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              {loading && <tr><td colSpan="4" style={{textAlign:'center', padding: '20px'}}>Loading history...</td></tr>}
+              {loading && <tr><td colSpan="6" style={{textAlign:'center', padding: '20px'}}>Loading history...</td></tr>}
               {!loading && history.map(item => (
                 <tr key={item.id}>
                   <td>{item.date}</td>
                   <td><strong>{item.contentTitle}</strong></td>
-                  <td style={{color: 'var(--green)'}}>+₹{parseFloat(item.calculatedAmount || 0).toLocaleString()}</td>
+                  <td style={{color: 'var(--text-muted)'}}>₹{parseFloat(item.totalRevenue || 0).toLocaleString()}</td>
+                  <td>{parseFloat(item.royaltyPercentage || 0)}%</td>
+                  <td style={{color: 'var(--green)', fontWeight: 600}}>+₹{parseFloat(item.calculatedAmount || 0).toLocaleString()}</td>
                   <td>
-                    <span className={`badge ${item.status === 'calculated' || item.status === 'approved' ? 'green' : 'amber'}`}>
+                    <span className={`badge ${item.status === 'approved' ? 'green' : item.status === 'calculated' ? 'cyan' : 'amber'}`}>
                       {item.status}
                     </span>
                   </td>
@@ -69,7 +74,7 @@ export default function CreatorRevenue() {
               ))}
               {!loading && history.length === 0 && (
                 <tr>
-                  <td colSpan="4" style={{textAlign:'center', padding: '20px', color: 'var(--text-muted)'}}>
+                  <td colSpan="6" style={{textAlign:'center', padding: '20px', color: 'var(--text-muted)'}}>
                     No royalty transactions found yet.
                   </td>
                 </tr>

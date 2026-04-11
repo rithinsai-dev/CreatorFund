@@ -58,6 +58,10 @@ export const api = {
     });
     return await res.json();
   },
+  getRecentTransactions: async () => {
+    const res = await fetch(`${BASE_URL}/admin/recent-transactions`);
+    return await res.json();
+  },
 
   // ── Creator (scoped to logged-in creator) ─────────────────────────────────
   getCreatorDashboardStats: async () => {

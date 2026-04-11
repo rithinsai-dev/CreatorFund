@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -36,15 +37,24 @@ public class AdminService {
         this.royaltyPaymentRepository = royaltyPaymentRepository;
     }
 
+    private static final BigDecimal PLATFORM_FEE_RATE = new BigDecimal("0.03");
+
     public Map<String, Object> getDashboardStats() {
-        BigDecimal platformRevenue = usageTransactionRepository.sumTotalRevenue();
+        BigDecimal totalRevenue = usageTransactionRepository.sumTotalRevenue();
+        if (totalRevenue == null) totalRevenue = BigDecimal.ZERO;
+
+        // Platform earns 3% of all transaction revenue
+        BigDecimal platformRevenue = totalRevenue.multiply(PLATFORM_FEE_RATE)
+                .setScale(2, RoundingMode.HALF_UP);
+
         long activeCreators = userRepository.countByRole(User.Role.CREATOR);
         long pendingRequests = digitalContentRepository.countByContentStatus(DigitalContent.ContentStatus.DRAFT);
 
         return Map.of(
-                "platformRevenue", platformRevenue != null ? platformRevenue : BigDecimal.ZERO,
-                "activeCreators",  activeCreators,
-                "pendingRequests", pendingRequests
+                "platformRevenue",        platformRevenue,
+                "totalTransactionRevenue", totalRevenue,
+                "activeCreators",          activeCreators,
+                "pendingRequests",         pendingRequests
         );
     }
 
@@ -134,5 +144,20 @@ public class AdminService {
         }
 
         return Map.of("success", true, "processedCount", pending.size());
+    }
+
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> getRecentTransactions() {
+        return usageTransactionRepository.findTop20ByOrderByTransactionDateDesc().stream()
+                .map(t -> Map.<String, Object>of(
+                        "id",              t.getId(),
+                        "contentTitle",    t.getDigitalContent().getTitle(),
+                        "distributorName", t.getDistributor().getName(),
+                        "amount",          t.getRevenueGenerated(),
+                        "type",            t.getUsageType().name().toLowerCase(),
+                        "status",          t.getTransactionStatus().name().toLowerCase(),
+                        "date",            t.getTransactionDate().toLocalDate().toString()
+                ))
+                .collect(Collectors.toList());
     }
 }

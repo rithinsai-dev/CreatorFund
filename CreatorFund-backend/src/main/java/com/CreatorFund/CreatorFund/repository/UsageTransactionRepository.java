@@ -21,4 +21,6 @@ public interface UsageTransactionRepository extends JpaRepository<UsageTransacti
     BigDecimal sumRevenueByDistributor(User distributor);
 
     long countByDistributor(User distributor);
+
+    List<UsageTransaction> findTop20ByOrderByTransactionDateDesc();
 }

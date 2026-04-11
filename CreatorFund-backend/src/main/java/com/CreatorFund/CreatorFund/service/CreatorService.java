@@ -72,13 +72,19 @@ public class CreatorService {
         BigDecimal earnings = royaltyCalculationRepository.sumCalculatedAmountByRoyaltyOwner(creator);
         if (earnings == null) earnings = BigDecimal.ZERO;
 
+        // Calculate pending payouts (royalties that are CALCULATED but not yet APPROVED/paid)
+        BigDecimal pendingPayout = royaltyCalculationRepository.sumCalculatedAmountByRoyaltyOwnerAndCalculationStatus(
+                creator, RoyaltyCalculation.CalculationStatus.CALCULATED);
+        if (pendingPayout == null) pendingPayout = BigDecimal.ZERO;
+
         // Views approximation: sales × average view factor
         long totalViews = totalSales * 5;
 
         return Map.of(
-                "totalViews", totalViews,
-                "totalSales", totalSales,
-                "earnings",   earnings
+                "totalViews",    totalViews,
+                "totalSales",    totalSales,
+                "earnings",      earnings,
+                "pendingPayout", pendingPayout
         );
     }
 
@@ -97,13 +103,16 @@ public class CreatorService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<Map<String, Object>> getRoyaltyHistory(Long creatorId) {
         User creator = resolveCreator(creatorId);
-        return royaltyCalculationRepository.findByRoyaltyOwner(creator).stream()
+        return royaltyCalculationRepository.findByRoyaltyOwnerOrderByCalculationDateDesc(creator).stream()
                 .map(r -> Map.<String, Object>of(
                         "id",                r.getId(),
                         "contentTitle",      r.getDigitalContent().getTitle(),
                         "calculatedAmount",  r.getCalculatedAmount(),
+                        "royaltyPercentage", r.getRoyaltyPercentage(),
+                        "totalRevenue",      r.getTotalRevenue(),
                         "status",            r.getCalculationStatus().name().toLowerCase(),
                         "date",              r.getCalculationDate().toLocalDate().toString()
                 ))

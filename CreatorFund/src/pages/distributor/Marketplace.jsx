@@ -30,6 +30,12 @@ export default function Marketplace() {
       if (res.success) {
         setLicense(res.licenseKey);
         setPaid(true);
+        // Update the sold count on the marketplace card locally
+        setActive(prev => prev.map(item =>
+          item.id === checkoutItem.id
+            ? { ...item, salesCount: (item.salesCount || 0) + 1 }
+            : item
+        ));
       }
     } catch {
       alert("Purchase failed");
