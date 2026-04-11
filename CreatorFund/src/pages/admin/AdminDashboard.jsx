@@ -5,8 +5,9 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState({ platformRevenue: 0, activeCreators: 0, pendingRequests: 0 });
 
   useEffect(() => {
-    // using async call to be ready for Java Backend
-    api.getDashboardStats().then(setStats);
+    api.getDashboardStats()
+      .then(data => { if (data && typeof data === 'object') setStats(data); })
+      .catch(() => {});
   }, []);
 
   return (
@@ -19,7 +20,7 @@ export default function AdminDashboard() {
         <div className="stat-grid">
           <div className="stat-card">
             <div className="stat-label">Platform Revenue</div>
-            <div className="stat-value" style={{color: 'var(--green)'}}>₹{stats.platformRevenue.toLocaleString()}</div>
+            <div className="stat-value" style={{color: 'var(--green)'}}>₹{parseFloat(stats.platformRevenue || 0).toLocaleString()}</div>
           </div>
           <div className="stat-card">
             <div className="stat-label">Active Creators</div>

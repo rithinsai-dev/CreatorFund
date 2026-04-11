@@ -1,7 +1,14 @@
 const BASE_URL = 'http://localhost:8080/api';
 
+// Helper to get logged-in user's ID from localStorage
+const getUserId = () => {
+  const saved = localStorage.getItem('creatorfund-user');
+  if (!saved) return null;
+  return JSON.parse(saved)?.id;
+};
+
 export const api = {
-  // Common - Auth
+  // ── Auth ──────────────────────────────────────────────────────────────────
   login: async (email, password, role) => {
     const res = await fetch(`${BASE_URL}/auth/login`, {
       method: 'POST',
@@ -9,7 +16,7 @@ export const api = {
       body: JSON.stringify({ email, password, role })
     });
     if (!res.ok) throw new Error('Login failed');
-    return { user: await res.json() };
+    return await res.json();
   },
 
   register: async (name, email, password, role) => {
@@ -19,10 +26,10 @@ export const api = {
       body: JSON.stringify({ name, email, password, role })
     });
     if (!res.ok) throw new Error('Registration failed');
-    return { user: await res.json() };
+    return await res.json();
   },
 
-  // Admin
+  // ── Admin ─────────────────────────────────────────────────────────────────
   getDashboardStats: async () => {
     const res = await fetch(`${BASE_URL}/admin/dashboard-stats`);
     return await res.json();
@@ -35,32 +42,69 @@ export const api = {
     const res = await fetch(`${BASE_URL}/admin/requests`);
     return await res.json();
   },
+  approveContent: async (contentId) => {
+    const res = await fetch(`${BASE_URL}/admin/approve-content?contentId=${contentId}`, {
+      method: 'POST'
+    });
+    return await res.json();
+  },
+  getAdminRevenueStats: async () => {
+    const res = await fetch(`${BASE_URL}/admin/revenue`);
+    return await res.json();
+  },
+  processCreatorPayout: async (creatorId) => {
+    const res = await fetch(`${BASE_URL}/admin/payout?creatorId=${creatorId}`, {
+      method: 'POST'
+    });
+    return await res.json();
+  },
 
-  // Creator
+  // ── Creator (scoped to logged-in creator) ─────────────────────────────────
   getCreatorDashboardStats: async () => {
-    const res = await fetch(`${BASE_URL}/creator/stats`);
+    const userId = getUserId();
+    const res = await fetch(`${BASE_URL}/creator/stats?creatorId=${userId}`);
     return await res.json();
   },
   getCreatorContent: async () => {
-    const res = await fetch(`${BASE_URL}/creator/content`);
+    const userId = getUserId();
+    const res = await fetch(`${BASE_URL}/creator/content?creatorId=${userId}`);
+    return await res.json();
+  },
+  getContentRights: async (contentId) => {
+    const res = await fetch(`${BASE_URL}/rights/content/${contentId}`);
+    return await res.json();
+  },
+  transferRights: async (contentId, toEmail, percentage) => {
+    const userId = getUserId();
+    const res = await fetch(`${BASE_URL}/rights/transfer?contentId=${contentId}&fromUserId=${userId}&toEmail=${toEmail}&percentage=${percentage}`, {
+      method: 'POST'
+    });
     return await res.json();
   },
   submitContent: async (data) => {
-    const res = await fetch(`${BASE_URL}/creator/content`, {
+    const userId = getUserId();
+    const res = await fetch(`${BASE_URL}/creator/content?creatorId=${userId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
     return await res.json();
   },
+  getRoyaltyHistory: async () => {
+    const userId = getUserId();
+    const res = await fetch(`${BASE_URL}/creator/royalties?creatorId=${userId}`);
+    return await res.json();
+  },
 
-  // Distributor
+  // ── Distributor (scoped to logged-in distributor) ─────────────────────────
   getDistDashboardStats: async () => {
-    const res = await fetch(`${BASE_URL}/distributor/dashboard-stats`);
+    const userId = getUserId();
+    const res = await fetch(`${BASE_URL}/distributor/dashboard-stats?distributorId=${userId}`);
     return await res.json();
   },
   getPurchases: async () => {
-    const res = await fetch(`${BASE_URL}/distributor/purchases`);
+    const userId = getUserId();
+    const res = await fetch(`${BASE_URL}/distributor/purchases?distributorId=${userId}`);
     return await res.json();
   },
   getMarketplace: async () => {
@@ -68,10 +112,11 @@ export const api = {
     return await res.json();
   },
   purchaseContent: async (contentId, paymentDetails) => {
+    const userId = getUserId();
     const res = await fetch(`${BASE_URL}/distributor/purchase`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contentId, paymentDetails })
+      body: JSON.stringify({ contentId, paymentDetails, distributorId: userId })
     });
     return await res.json();
   }

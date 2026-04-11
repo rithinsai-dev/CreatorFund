@@ -20,16 +20,18 @@ public class DistributorController {
         this.distributorService = distributorService;
     }
 
-    public record PurchaseRequest(Long contentId, String paymentDetails) {}
+    public record PurchaseRequest(Long contentId, String paymentDetails, Long distributorId) {}
 
     @GetMapping("/dashboard-stats")
-    public ResponseEntity<Map<String, Object>> getDashboardStats() {
-        return ResponseEntity.ok(distributorService.getDashboardStats());
+    public ResponseEntity<Map<String, Object>> getDashboardStats(
+            @RequestParam(defaultValue = "1") Long distributorId) {
+        return ResponseEntity.ok(distributorService.getDashboardStats(distributorId));
     }
 
     @GetMapping("/purchases")
-    public ResponseEntity<List<Map<String, Object>>> getPurchases() {
-        return ResponseEntity.ok(distributorService.getPurchases());
+    public ResponseEntity<List<Map<String, Object>>> getPurchases(
+            @RequestParam(defaultValue = "1") Long distributorId) {
+        return ResponseEntity.ok(distributorService.getPurchases(distributorId));
     }
 
     @GetMapping("/marketplace")

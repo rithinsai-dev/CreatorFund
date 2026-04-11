@@ -1,44 +1,148 @@
 package com.CreatorFund.CreatorFund.service;
 
 import com.CreatorFund.CreatorFund.controller.DistributorController.PurchaseRequest;
+import com.CreatorFund.CreatorFund.entity.DigitalContent;
+import com.CreatorFund.CreatorFund.entity.UsageTransaction;
+import com.CreatorFund.CreatorFund.entity.User;
+import com.CreatorFund.CreatorFund.repository.DigitalContentRepository;
+import com.CreatorFund.CreatorFund.repository.UsageTransactionRepository;
+import com.CreatorFund.CreatorFund.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class DistributorService {
 
-    public Map<String, Object> getDashboardStats() {
-        // TODO: Database lookup
+    private final UserRepository userRepository;
+    private final DigitalContentRepository digitalContentRepository;
+    private final UsageTransactionRepository usageTransactionRepository;
+    private final RoyaltyService royaltyService;
+
+    @Autowired
+    public DistributorService(UserRepository userRepository,
+                               DigitalContentRepository digitalContentRepository,
+                               UsageTransactionRepository usageTransactionRepository,
+                               RoyaltyService royaltyService) {
+        this.userRepository = userRepository;
+        this.digitalContentRepository = digitalContentRepository;
+        this.usageTransactionRepository = usageTransactionRepository;
+        this.royaltyService = royaltyService;
+    }
+
+    private User resolveDistributor(Long distributorId) {
+        User distributor = userRepository.findById(distributorId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Distributor not found"));
+
+        if (distributor.getRole() != User.Role.DISTRIBUTOR) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is not a distributor");
+        }
+
+        return distributor;
+    }
+
+    public Map<String, Object> getDashboardStats(Long distributorId) {
+        User distributor = resolveDistributor(distributorId);
+        BigDecimal totalSpent = usageTransactionRepository.sumRevenueByDistributor(distributor);
+        long purchaseCount = usageTransactionRepository.countByDistributor(distributor);
+        long availableContent = digitalContentRepository.countByContentStatus(DigitalContent.ContentStatus.ACTIVE);
+        long ownedLicenses = purchaseCount;
+
         return Map.of(
-                "totalSpent", 1498,
-                "purchaseCount", 2,
-                "availableContentCount", 3,
-                "ownedLicensesCount", 2
+                "totalSpent",            totalSpent != null ? totalSpent : BigDecimal.ZERO,
+                "purchaseCount",         purchaseCount,
+                "availableContentCount", availableContent,
+                "ownedLicensesCount",    ownedLicenses
         );
     }
 
-    public List<Map<String, Object>> getPurchases() {
-        // TODO: Database lookup
-        return List.of(
-                Map.of("id", 101, "contentTitle", "Learn React Hooks", "type", "course", "amount", 999, "status", "completed", "date", "2023-10-01", "licenseKey", "LIC-1234"),
-                Map.of("id", 102, "contentTitle", "Tech Review Video", "type", "video", "amount", 499, "status", "completed", "date", "2023-10-05", "licenseKey", "LIC-5678")
-        );
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> getPurchases(Long distributorId) {
+        User distributor = resolveDistributor(distributorId);
+        return usageTransactionRepository.findByDistributorOrderByTransactionDateDesc(distributor).stream()
+                .map(t -> Map.<String, Object>of(
+                        "id",           t.getId(),
+                        "contentTitle", t.getDigitalContent().getTitle(),
+                        "type",         t.getDigitalContent().getContentType().name().toLowerCase(),
+                        "amount",       t.getRevenueGenerated(),
+                        "status",       t.getTransactionStatus().name().toLowerCase(),
+                        "date",         t.getTransactionDate().toLocalDate().toString(),
+                        "licenseKey",   t.getLicenseKey() != null ? t.getLicenseKey() : ""
+                ))
+                .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<Map<String, Object>> getMarketplace() {
-        // TODO: Database lookup
-        return List.of(
-                Map.of("id", 1, "title", "Learn React Hooks", "type", "course", "price", 999999999, "status", "active", "creatorName", "Alice", "salesCount", 50, "targetQty", 100),
-                Map.of("id", 2, "title", "Tech Review Video", "type", "video", "price", 499, "status", "active", "creatorName", "Bob", "salesCount", 120, "targetQty", 200),
-                Map.of("id", 3, "title", "Lo-Fi Beats", "type", "music", "price", 199, "status", "active", "creatorName", "Charlie", "salesCount", 300, "targetQty", 500)
-        );
+        return digitalContentRepository.findByContentStatus(DigitalContent.ContentStatus.ACTIVE).stream()
+                .map(c -> Map.<String, Object>of(
+                        "id",          c.getId(),
+                        "title",       c.getTitle(),
+                        "type",        c.getContentType().name().toLowerCase(),
+                        "price",       c.getPrice() != null ? c.getPrice() : BigDecimal.ZERO,
+                        "status",      "active",
+                        "creatorName", c.getCreatedBy().getName(),
+                        "salesCount",  c.getSalesCount() != null ? c.getSalesCount() : 0,
+                        "targetQty",   c.getTargetQty() != null ? c.getTargetQty() : 0
+                ))
+                .collect(Collectors.toList());
     }
 
+    @Transactional
     public Map<String, Object> purchaseContent(PurchaseRequest request) {
-        // TODO: Save to database, deduct payment, generate license
-        System.out.println("Service: Buying license for content id: " + request.contentId());
-        return Map.of("success", true, "licenseKey", "NEW-LIC-123");
+        if (request == null || request.contentId() == null || request.distributorId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Content and distributor are required");
+        }
+
+        DigitalContent content = digitalContentRepository.findById(request.contentId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Content not found"));
+
+        if (content.getContentStatus() != DigitalContent.ContentStatus.ACTIVE) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Content is not available for purchase");
+        }
+
+        if (content.getTargetQty() != null
+                && content.getSalesCount() != null
+                && content.getSalesCount() >= content.getTargetQty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Content has reached its sales limit");
+        }
+
+        User distributor = resolveDistributor(request.distributorId());
+
+        String licenseKey = "LIC-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+
+        UsageTransaction transaction = UsageTransaction.builder()
+                .digitalContent(content)
+                .distributor(distributor)
+                .usageType(UsageTransaction.UsageType.DOWNLOAD)
+                .usageCount(1)
+                .revenueGenerated(content.getPrice() != null ? content.getPrice() : BigDecimal.ZERO)
+                .transactionStatus(UsageTransaction.TransactionStatus.RECORDED)
+                .licenseKey(licenseKey)
+                .build();
+
+        usageTransactionRepository.save(transaction);
+
+        content.setSalesCount(content.getSalesCount() != null ? content.getSalesCount() + 1 : 1);
+        
+        // Auto-expiry logic: if targetQty is reached, archive the content
+        if (content.getTargetQty() != null && content.getSalesCount() >= content.getTargetQty()) {
+            content.setContentStatus(DigitalContent.ContentStatus.ARCHIVED);
+        }
+
+        digitalContentRepository.save(content);
+
+        // Distribute royalties to rights holders
+        royaltyService.calculateRoyalties(content, transaction.getRevenueGenerated());
+
+        return Map.of("success", true, "licenseKey", licenseKey);
     }
 }

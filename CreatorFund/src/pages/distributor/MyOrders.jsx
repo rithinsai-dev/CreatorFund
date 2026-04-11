@@ -5,7 +5,9 @@ export default function MyOrders() {
   const [myOrders, setMyOrders] = useState([]);
 
   useEffect(() => {
-    api.getPurchases().then(setMyOrders);
+    api.getPurchases()
+      .then(data => { if (Array.isArray(data)) setMyOrders(data); })
+      .catch(() => {});
   }, []);
 
   return (
@@ -24,12 +26,15 @@ export default function MyOrders() {
                   <tr key={o.id}>
                     <td style={{fontWeight:600}}>{o.contentTitle}</td>
                     <td><span className={`badge ${o.type==='music'?'purple':o.type==='video'?'red':o.type==='article'?'amber':'green'}`}>{o.type}</span></td>
-                    <td>₹{o.amount}</td>
+                    <td>₹{parseFloat(o.amount || 0).toLocaleString()}</td>
                     <td style={{fontFamily:'var(--mono)',fontSize:11,color:'var(--cyan)'}}>{o.licenseKey || '—'}</td>
-                    <td><span className={`badge ${o.status==='completed'?'green':'red'}`}>{o.status}</span></td>
+                    <td><span className={`badge ${o.status==='settled'||o.status==='completed'?'green':o.status==='recorded'||o.status==='verified'?'amber':'red'}`}>{o.status}</span></td>
                     <td style={{color:'var(--text-muted)'}}>{o.date}</td>
                   </tr>
                 ))}
+                {myOrders.length === 0 && (
+                  <tr><td colSpan="6" style={{textAlign:'center',padding:'20px',color:'var(--text-muted)'}}>No orders yet</td></tr>
+                )}
               </tbody>
             </table>
           </div>

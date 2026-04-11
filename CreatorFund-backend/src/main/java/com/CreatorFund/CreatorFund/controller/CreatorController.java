@@ -20,20 +20,30 @@ public class CreatorController {
         this.creatorService = creatorService;
     }
 
-    public record SubmitContentRequest(String title, String type, String price) {}
+    public record SubmitContentRequest(String title, String type, String price, String description, Integer targetQty) {}
 
     @GetMapping("/stats")
-    public ResponseEntity<Map<String, Object>> getCreatorStats() {
-        return ResponseEntity.ok(creatorService.getStats());
+    public ResponseEntity<Map<String, Object>> getCreatorStats(
+            @RequestParam Long creatorId) {
+        return ResponseEntity.ok(creatorService.getStats(creatorId));
     }
 
     @GetMapping("/content")
-    public ResponseEntity<List<Map<String, Object>>> getCreatorContent() {
-        return ResponseEntity.ok(creatorService.getCreatorContent());
+    public ResponseEntity<List<Map<String, Object>>> getCreatorContent(
+            @RequestParam Long creatorId) {
+        return ResponseEntity.ok(creatorService.getCreatorContent(creatorId));
     }
 
     @PostMapping("/content")
-    public ResponseEntity<Map<String, Object>> submitContent(@RequestBody SubmitContentRequest request) {
-        return ResponseEntity.ok(creatorService.submitContent(request));
+    public ResponseEntity<Map<String, Object>> submitContent(
+            @RequestBody SubmitContentRequest request,
+            @RequestParam Long creatorId) {
+        return ResponseEntity.ok(creatorService.submitContent(request, creatorId));
+    }
+
+    @GetMapping("/royalties")
+    public ResponseEntity<List<Map<String, Object>>> getRoyaltyHistory(
+            @RequestParam Long creatorId) {
+        return ResponseEntity.ok(creatorService.getRoyaltyHistory(creatorId));
     }
 }

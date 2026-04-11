@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 
 export default function LoginPage({ onSwitchToSignup }) {
   const { login } = useAuth();
@@ -9,7 +9,7 @@ export default function LoginPage({ onSwitchToSignup }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(email, 'dummy_password', role);
+    await login(email, password, role);
   };
 
   return (

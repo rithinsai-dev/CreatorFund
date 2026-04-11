@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { api } from '../../data/api';
 
-const TYPE_COLORS = { music: 'purple', video: 'red', article: 'amber', course: 'green' };
+const TYPE_COLORS = { music: 'purple', video: 'red', article: 'amber', course: 'green', podcast: 'cyan' };
 
 export default function Marketplace() {
   const [active, setActive] = useState([]);
@@ -14,7 +14,9 @@ export default function Marketplace() {
   const [license, setLicense] = useState('')
 
   useEffect(() => {
-    api.getMarketplace().then(data => setActive(data.filter(c => c.status === 'active')));
+    api.getMarketplace()
+      .then(data => { if (Array.isArray(data)) setActive(data.filter(c => c.status === 'active')); })
+      .catch(() => {});
   }, []);
 
   const filtered = active.filter(c =>
@@ -115,7 +117,7 @@ export default function Marketplace() {
               <div className={`content-type badge ${TYPE_COLORS[c.type]}`}>{c.type}</div>
               <div className="content-title">{c.title}</div>
               <div className="content-meta">by {c.creatorName}</div>
-              <div className="content-price" style={{color:'var(--cyan)'}}>₹{c.price}</div>
+              <div className="content-price" style={{color:'var(--cyan)'}}>₹{parseFloat(c.price || 0).toLocaleString()}</div>
               <div className="content-footer">
                 <span style={{fontSize:11,color:'var(--text-muted)'}}>{c.salesCount}/{c.targetQty} sold</span>
                 <button className="btn btn-primary btn-sm" onClick={() => setCheckoutItem(c)}>Buy License</button>

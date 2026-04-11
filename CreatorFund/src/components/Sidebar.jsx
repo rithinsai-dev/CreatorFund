@@ -1,4 +1,4 @@
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 
 const NAV_ITEMS = {
   admin: [
@@ -26,7 +26,8 @@ export default function Sidebar({ activePage, onNavigate }) {
   
   if (!user) return null;
 
-  const items = NAV_ITEMS[user.role] || [];
+  const role = user.role?.toLowerCase();
+  const items = NAV_ITEMS[role] || [];
 
   return (
     <aside className="sidebar">

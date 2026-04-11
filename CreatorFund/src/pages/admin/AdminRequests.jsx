@@ -1,18 +1,30 @@
 import { useEffect, useState } from 'react';
 import { api } from '../../data/api';
 
-const TYPE_COLORS = { music: 'purple', video: 'red', article: 'amber', course: 'green' };
+const TYPE_COLORS = { music: 'purple', video: 'red', article: 'amber', course: 'green', podcast: 'cyan' };
 
 export default function AdminRequests() {
   const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.getRequests().then(setRequests);
+    api.getRequests()
+      .then(data => { if (Array.isArray(data)) setRequests(data); })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
-  const handleApprove = (id) => {
-    setRequests(requests.filter(r => r.id !== id));
-    // In future, call api.approveRequest(id)
+  const handleApprove = async (id) => {
+    try {
+      const res = await api.approveContent(id);
+      if (res.success) {
+        setRequests(prev => prev.filter(r => r.id !== id));
+      } else {
+        alert("Failed to approve content");
+      }
+    } catch (err) {
+      alert("Error approving content: " + err.message);
+    }
   };
 
   return (
@@ -34,11 +46,14 @@ export default function AdminRequests() {
               </tr>
             </thead>
             <tbody>
-              {requests.map(r => (
+              {loading && (
+                <tr><td colSpan="6" style={{textAlign:'center', padding:'20px'}}>Loading...</td></tr>
+              )}
+              {!loading && requests.map(r => (
                 <tr key={r.id}>
                   <td>{r.creatorName}</td>
                   <td><strong>{r.contentTitle}</strong></td>
-                  <td><span className={`badge ${TYPE_COLORS[r.type]}`}>{r.type}</span></td>
+                  <td><span className={`badge ${TYPE_COLORS[r.type] || 'green'}`}>{r.type}</span></td>
                   <td>{r.date}</td>
                   <td><span className="badge amber">{r.status}</span></td>
                   <td>
@@ -49,7 +64,9 @@ export default function AdminRequests() {
                   </td>
                 </tr>
               ))}
-              {requests.length === 0 && <tr><td colSpan="6" style={{textAlign:'center', padding: '20px'}}>No pending requests</td></tr>}
+              {!loading && requests.length === 0 && (
+                <tr><td colSpan="6" style={{textAlign:'center', padding: '20px', color:'var(--text-muted)'}}>No pending requests</td></tr>
+              )}
             </tbody>
           </table>
         </div>

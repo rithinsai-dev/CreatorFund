@@ -1,43 +1,41 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { useState } from 'react';
 import { api } from '../data/api';
+import { AuthContext } from './useAuth';
 
-const AuthContext = createContext();
+const getStoredUser = () => {
+  const savedUser = localStorage.getItem('creatorfund-user');
+  if (!savedUser) return null;
 
-export const useAuth = () => useContext(AuthContext);
+  try {
+    return JSON.parse(savedUser);
+  } catch {
+    localStorage.removeItem('creatorfund-user');
+    return null;
+  }
+};
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  // Check localStorage on load (simulating persistent session)
-  useEffect(() => {
-    const saved = localStorage.getItem('creatorfund-user');
-    if (saved) setUser(JSON.parse(saved));
-    setLoading(false);
-  }, []);
+  const [user, setUser] = useState(getStoredUser);
 
   const login = async (email, password, role) => {
     try {
-      // Connects to our dummy API service
-      const res = await api.login(email, password, role);
-      setUser(res.user);
-      localStorage.setItem('creatorfund-user', JSON.stringify(res.user));
-      localStorage.setItem('creatorfund-token', res.token);
+      const user = await api.login(email, password, role);
+      setUser(user);
+      localStorage.setItem('creatorfund-user', JSON.stringify(user));
     } catch (err) {
       console.error(err);
-      throw new Error('Login failed');
+      throw new Error('Login failed. Please check your credentials.');
     }
   };
 
   const register = async (name, email, password, role) => {
     try {
-      const res = await api.register(name, email, password, role);
-      setUser(res.user);
-      localStorage.setItem('creatorfund-user', JSON.stringify(res.user));
-      localStorage.setItem('creatorfund-token', res.token);
+      const user = await api.register(name, email, password, role);
+      setUser(user);
+      localStorage.setItem('creatorfund-user', JSON.stringify(user));
     } catch (err) {
       console.error(err);
-      throw new Error('Registration failed');
+      throw new Error('Registration failed. Email may already be in use.');
     }
   };
 
@@ -46,8 +44,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('creatorfund-user');
     localStorage.removeItem('creatorfund-token');
   };
-
-  if (loading) return <div>Loading...</div>;
 
   return (
     <AuthContext.Provider value={{ user, login, logout, register }}>
