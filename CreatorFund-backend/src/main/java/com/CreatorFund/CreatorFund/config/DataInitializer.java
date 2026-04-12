@@ -35,7 +35,7 @@ public class DataInitializer implements CommandLineRunner {
         User admin = userRepository.save(User.builder()
                 .name("Super Admin")
                 .email("admin@creatorfund.com")
-                .password("admin123")
+                .password(org.mindrot.jbcrypt.BCrypt.hashpw("admin123", org.mindrot.jbcrypt.BCrypt.gensalt()))
                 .organizationName("CreatorFund HQ")
                 .role(User.Role.ADMIN)
                 .build());
@@ -43,7 +43,7 @@ public class DataInitializer implements CommandLineRunner {
         User alice = userRepository.save(User.builder()
                 .name("Alice Sharma")
                 .email("alice@creatorfund.com")
-                .password("alice123")
+                .password(org.mindrot.jbcrypt.BCrypt.hashpw("alice123", org.mindrot.jbcrypt.BCrypt.gensalt()))
                 .organizationName("Alice Studios")
                 .role(User.Role.CREATOR)
                 .build());
@@ -51,7 +51,7 @@ public class DataInitializer implements CommandLineRunner {
         User bob = userRepository.save(User.builder()
                 .name("Bob Kumar")
                 .email("bob@creatorfund.com")
-                .password("bob123")
+                .password(org.mindrot.jbcrypt.BCrypt.hashpw("bob123", org.mindrot.jbcrypt.BCrypt.gensalt()))
                 .organizationName("Bob Media")
                 .role(User.Role.CREATOR)
                 .build());
@@ -59,7 +59,7 @@ public class DataInitializer implements CommandLineRunner {
         User rohan = userRepository.save(User.builder()
                 .name("Rohan Verma")
                 .email("rohan@creatorfund.com")
-                .password("rohan123")
+                .password(org.mindrot.jbcrypt.BCrypt.hashpw("rohan123", org.mindrot.jbcrypt.BCrypt.gensalt()))
                 .organizationName("Rohan Distribution Co.")
                 .role(User.Role.DISTRIBUTOR)
                 .build());
@@ -67,7 +67,7 @@ public class DataInitializer implements CommandLineRunner {
         User priya = userRepository.save(User.builder()
                 .name("Priya Nair")
                 .email("priya@creatorfund.com")
-                .password("priya123")
+                .password(org.mindrot.jbcrypt.BCrypt.hashpw("priya123", org.mindrot.jbcrypt.BCrypt.gensalt()))
                 .organizationName("Priya Media Pvt Ltd")
                 .role(User.Role.DISTRIBUTOR)
                 .build());

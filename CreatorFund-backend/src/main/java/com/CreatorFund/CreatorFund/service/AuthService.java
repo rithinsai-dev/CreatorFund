@@ -42,8 +42,12 @@ public class AuthService {
     public Map<String, Object> login(String email, String password, String role) {
         User.Role requestedRole = parseRole(role);
         String normalizedEmail = email == null ? null : email.trim().toLowerCase(Locale.ROOT);
-        User user = userRepository.findByEmailAndPassword(normalizedEmail, password)
+        User user = userRepository.findByEmail(normalizedEmail)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password"));
+
+        if (!org.mindrot.jbcrypt.BCrypt.checkpw(password, user.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
+        }
 
         if (user.getRole() != requestedRole) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid role for this account");
@@ -71,10 +75,12 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Organization name is required");
         }
 
+        String hashedPassword = org.mindrot.jbcrypt.BCrypt.hashpw(password, org.mindrot.jbcrypt.BCrypt.gensalt());
+
         User newUser = User.builder()
                 .name(name.trim())
                 .email(email.trim().toLowerCase(Locale.ROOT))
-                .password(password)
+                .password(hashedPassword)
                 .organizationName(organizationName.trim())
                 .role(requestedRole)
                 .build();
