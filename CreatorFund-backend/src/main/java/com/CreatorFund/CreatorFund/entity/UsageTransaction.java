@@ -45,7 +45,7 @@ public class UsageTransaction {
     @Column(name = "transaction_status", nullable = false)
     private TransactionStatus transactionStatus = TransactionStatus.RECORDED;
 
-    // Added for license tracking
+    
     @Column(name = "license_key")
     private String licenseKey;
 

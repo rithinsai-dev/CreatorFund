@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('creatorfund-user', JSON.stringify(user));
     } catch (err) {
       console.error(err);
-      throw new Error('Login failed. Please check your credentials.');
+      throw new Error(err.message || 'Login failed. Please check your credentials.');
     }
   };
 
@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('creatorfund-user', JSON.stringify(user));
     } catch (err) {
       console.error(err);
-      throw new Error('Registration failed. Email may already be in use.');
+      throw new Error(err.message || 'Registration failed. Email may already be in use.');
     }
   };
 

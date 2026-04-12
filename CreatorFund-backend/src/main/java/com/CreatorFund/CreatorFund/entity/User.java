@@ -31,8 +31,8 @@ public class User {
     @Column(name = "organization_name")
     private String organizationName;
 
-    // Backward/alternate column name support (some DBs use `organizationname` instead of `organization_name`).
-    // Keep both columns in sync so either schema variant works.
+    
+    
     @Column(name = "organizationname")
     private String organizationNameLegacy;
 

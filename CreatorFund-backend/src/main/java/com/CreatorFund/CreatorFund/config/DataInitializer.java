@@ -23,7 +23,7 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // Only seed if the User table is empty
+        
         if (userRepository.count() > 0) {
             System.out.println("[DataInitializer] Data already exists — skipping seed.");
             return;
@@ -31,7 +31,7 @@ public class DataInitializer implements CommandLineRunner {
 
         System.out.println("[DataInitializer] Seeding mock data...");
 
-        // ── 1. USERS ─────────────────────────────────────────────────────────
+        
         User admin = userRepository.save(User.builder()
                 .name("Super Admin")
                 .email("admin@creatorfund.com")
@@ -74,7 +74,7 @@ public class DataInitializer implements CommandLineRunner {
 
         System.out.println("[DataInitializer] Users created.");
 
-        // ── 2. DIGITAL CONTENT ───────────────────────────────────────────────
+        
         DigitalContent c1 = digitalContentRepository.save(DigitalContent.builder()
                 .title("Learn React Hooks")
                 .contentType(DigitalContent.ContentType.COURSE)
@@ -136,7 +136,7 @@ public class DataInitializer implements CommandLineRunner {
 
         System.out.println("[DataInitializer] Digital content created.");
 
-        // ── 3. CONTENT RIGHTS ────────────────────────────────────────────────
+        
         contentRightsRepository.saveAll(List.of(
                 ContentRights.builder()
                         .digitalContent(c1).rightsOwner(alice)
@@ -176,7 +176,7 @@ public class DataInitializer implements CommandLineRunner {
 
         System.out.println("[DataInitializer] Content rights created.");
 
-        // ── 4. USAGE TRANSACTIONS (purchases by distributors) ─────────────────
+        
         List<UsageTransaction> transactions = usageTransactionRepository.saveAll(List.of(
                 UsageTransaction.builder()
                         .digitalContent(c1).distributor(rohan)
@@ -209,7 +209,7 @@ public class DataInitializer implements CommandLineRunner {
 
         System.out.println("[DataInitializer] Usage transactions created.");
 
-        // ── 5. ROYALTY CALCULATIONS ───────────────────────────────────────────
+        
         RoyaltyCalculation rc1 = royaltyCalculationRepository.save(RoyaltyCalculation.builder()
                 .digitalContent(c1)
                 .royaltyOwner(alice)
@@ -232,7 +232,7 @@ public class DataInitializer implements CommandLineRunner {
 
         System.out.println("[DataInitializer] Royalty calculations created.");
 
-        // ── 6. ROYALTY PAYMENTS ───────────────────────────────────────────────
+        
         royaltyPaymentRepository.saveAll(List.of(
                 RoyaltyPayment.builder()
                         .royaltyCalculation(rc1)
@@ -253,7 +253,7 @@ public class DataInitializer implements CommandLineRunner {
 
         System.out.println("[DataInitializer] Royalty payments created.");
 
-        // ── 7. RIGHTS TRANSFER ────────────────────────────────────────────────
+        
         rightsTransferRepository.save(RightsTransfer.builder()
                 .digitalContent(c3)
                 .previousOwner(alice)

@@ -1,6 +1,6 @@
 const BASE_URL = 'http://localhost:8080/api';
 
-// Helper to get logged-in user's ID from localStorage
+
 const getUserId = () => {
   const saved = localStorage.getItem('creatorfund-user');
   if (!saved) return null;
@@ -8,14 +8,18 @@ const getUserId = () => {
 };
 
 export const api = {
-  // ── Auth ──────────────────────────────────────────────────────────────────
+  
   login: async (email, password, role) => {
     const res = await fetch(`${BASE_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password, role })
     });
-    if (!res.ok) throw new Error('Login failed');
+    if (!res.ok) {
+        let msg = 'Login failed';
+        try { const errData = await res.json(); msg = errData.message || msg; } catch (e) {}
+        throw new Error(msg);
+    }
     return await res.json();
   },
 
@@ -25,11 +29,15 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, email, password, role, organizationName })
     });
-    if (!res.ok) throw new Error('Registration failed');
+    if (!res.ok) {
+        let msg = 'Registration failed';
+        try { const errData = await res.json(); msg = errData.message || msg; } catch (e) {}
+        throw new Error(msg);
+    }
     return await res.json();
   },
 
-  // ── Admin ─────────────────────────────────────────────────────────────────
+  
   getDashboardStats: async () => {
     const res = await fetch(`${BASE_URL}/admin/dashboard-stats`);
     return await res.json();
@@ -69,7 +77,7 @@ export const api = {
     return await res.json();
   },
 
-  // ── Creator (scoped to logged-in creator) ─────────────────────────────────
+  
   getCreatorDashboardStats: async () => {
     const userId = getUserId();
     const res = await fetch(`${BASE_URL}/creator/stats?creatorId=${userId}`);
@@ -110,7 +118,7 @@ export const api = {
     return await res.json();
   },
 
-  // ── Distributor (scoped to logged-in distributor) ─────────────────────────
+  
   getDistDashboardStats: async () => {
     const userId = getUserId();
     const res = await fetch(`${BASE_URL}/distributor/dashboard-stats?distributorId=${userId}`);

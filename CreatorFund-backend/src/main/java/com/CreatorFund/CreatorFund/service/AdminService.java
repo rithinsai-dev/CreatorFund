@@ -43,7 +43,7 @@ public class AdminService {
         BigDecimal totalRevenue = usageTransactionRepository.sumTotalRevenue();
         if (totalRevenue == null) totalRevenue = BigDecimal.ZERO;
 
-        // Platform earns 3% of all transaction revenue
+        
         BigDecimal platformRevenue = totalRevenue.multiply(PLATFORM_FEE_RATE)
                 .setScale(2, RoundingMode.HALF_UP);
 
@@ -137,7 +137,7 @@ public class AdminService {
             return Map.of("success", false, "message", "No pending royalties found");
         }
 
-        // Process each calculation into a payment
+        
         for (RoyaltyCalculation rc : pending) {
             RoyaltyPayment payment = RoyaltyPayment.builder()
                     .royaltyCalculation(rc)

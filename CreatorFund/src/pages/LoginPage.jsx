@@ -6,16 +6,23 @@ export default function LoginPage({ onSwitchToSignup }) {
   const [role, setRole] = useState('admin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(email, password, role);
+    setError('');
+    try {
+      await login(email, password, role);
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
     <div className="login-container">
       <div className="card login-card">
         <h2>CreatorFund Login</h2>
+        {error && <div style={{ color: '#d32f2f', marginBottom: '15px', padding: '10px', backgroundColor: '#ffebee', borderRadius: '4px', border: '1px solid #ffcdd2', fontSize: '0.9rem' }}>{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Login As</label>

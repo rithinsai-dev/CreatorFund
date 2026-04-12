@@ -28,19 +28,19 @@ public class RoyaltyService {
     }
 
     private static final BigDecimal PLATFORM_FEE_RATE = new BigDecimal("0.03");
-    private static final BigDecimal CREATOR_SHARE_RATE = BigDecimal.ONE.subtract(PLATFORM_FEE_RATE); // 0.97
+    private static final BigDecimal CREATOR_SHARE_RATE = BigDecimal.ONE.subtract(PLATFORM_FEE_RATE); 
 
     @Transactional
     public void calculateRoyalties(DigitalContent content, BigDecimal revenue) {
-        // Apply 3% platform fee — creators share 97% of the revenue
+        
         BigDecimal creatorRevenue = revenue.multiply(CREATOR_SHARE_RATE).setScale(2, RoundingMode.HALF_UP);
 
-        // Find all active rights for this content
+        
         List<ContentRights> rights = contentRightsRepository.findByDigitalContentAndRightsStatus(
                 content, ContentRights.RightsStatus.ACTIVE);
 
         for (ContentRights right : rights) {
-            // calculatedAmount = creatorRevenue * (percentage / 100)
+            
             BigDecimal percentage = right.getOwnershipPercentage();
             BigDecimal calculatedAmount = creatorRevenue.multiply(percentage)
                     .divide(new BigDecimal("100.00"), 2, RoundingMode.HALF_UP);

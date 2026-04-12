@@ -40,15 +40,15 @@ public class DigitalContent {
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
 
-    // Price for marketplace display
+    
     @Column(precision = 10, scale = 2)
     private java.math.BigDecimal price;
 
-    // Sales count for marketplace
+    
     @Column(name = "sales_count")
     private Integer salesCount = 0;
 
-    // Target quantity for distribution
+    
     @Column(name = "target_qty")
     private Integer targetQty;
 

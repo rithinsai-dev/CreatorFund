@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*") // Typically you'll configure CORS globally, but this is helpful for testing
+@CrossOrigin(origins = "*") 
 public class AuthController {
 
     private final AuthService authService;
@@ -19,7 +19,7 @@ public class AuthController {
         this.authService = authService;
     }
 
-    // Helper records for requests and responses
+    
     public record LoginRequest(String email, String password, String role) {}
     public record RegisterRequest(String name, String email, String password, String role, String organizationName) {}
 

@@ -70,16 +70,16 @@ public class CreatorService {
                 .mapToLong(c -> c.getSalesCount() != null ? c.getSalesCount() : 0)
                 .sum();
 
-        // Calculate real earnings from RoyaltyCalculation records
+        
         BigDecimal earnings = royaltyCalculationRepository.sumCalculatedAmountByRoyaltyOwner(creator);
         if (earnings == null) earnings = BigDecimal.ZERO;
 
-        // Calculate pending payouts (royalties that are CALCULATED but not yet APPROVED/paid)
+        
         BigDecimal pendingPayout = royaltyCalculationRepository.sumCalculatedAmountByRoyaltyOwnerAndCalculationStatus(
                 creator, RoyaltyCalculation.CalculationStatus.CALCULATED);
         if (pendingPayout == null) pendingPayout = BigDecimal.ZERO;
 
-        // Views approximation: sales × average view factor
+        
         long totalViews = totalSales * 5;
 
         return Map.of(
@@ -168,7 +168,7 @@ public class CreatorService {
 
         digitalContentRepository.save(content);
 
-        // Assign 100% rights to the creator by default
+        
         LocalDateTime now = LocalDateTime.now();
         ContentRights rights = ContentRights.builder()
                 .digitalContent(content)

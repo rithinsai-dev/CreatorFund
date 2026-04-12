@@ -86,7 +86,7 @@ export default function ManageRights({ contentId, onBack }) {
         <div className="page-subtitle">View ownership split, transfer fractional rights, and audit transfer history</div>
       </div>
 
-      {/* Ownership bar visualization */}
+      {}
       {rights.length > 0 && (
         <div className="card" style={{marginBottom: '1.5rem'}}>
           <h3 style={{marginBottom: 12}}>Ownership Distribution</h3>
@@ -119,7 +119,7 @@ export default function ManageRights({ contentId, onBack }) {
       )}
 
       <div className="grid">
-        {/* Current Ownership Table */}
+        {}
         <div className="card">
           <h3>Current Ownership Split</h3>
           <div className="table-wrap" style={{marginTop: '1rem'}}>
@@ -158,7 +158,7 @@ export default function ManageRights({ contentId, onBack }) {
           </div>
         </div>
 
-        {/* Transfer Form */}
+        {}
         <div className="card">
           <h3>Initiate Rights Transfer</h3>
           {myPercentage > 0 ? (
@@ -225,7 +225,7 @@ export default function ManageRights({ contentId, onBack }) {
         </div>
       </div>
 
-      {/* Transfer History */}
+      {}
       <div className="card" style={{marginTop: '1.5rem'}}>
         <h3>Transfer History</h3>
         <div className="table-wrap" style={{marginTop: '1rem'}}>

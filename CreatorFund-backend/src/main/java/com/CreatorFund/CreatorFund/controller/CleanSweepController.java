@@ -14,7 +14,7 @@ public class CleanSweepController {
     @GetMapping("/clean-sweep")
     public String cleanSweep() {
         try {
-            // Drop everything in reverse order of dependencies
+            
             jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS = 0");
             jdbcTemplate.execute("DROP TABLE IF EXISTS `RoyaltyPayment`");
             jdbcTemplate.execute("DROP TABLE IF EXISTS `RoyaltyCalculation`");

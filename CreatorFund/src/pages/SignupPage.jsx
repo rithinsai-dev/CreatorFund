@@ -8,16 +8,23 @@ export default function SignupPage({ onSwitchToLogin }) {
   const [organizationName, setOrganizationName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await register(name, email, password, role, organizationName);
+    setError('');
+    try {
+      await register(name, email, password, role, organizationName);
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
     <div className="login-container">
       <div className="card login-card">
         <h2>CreatorFund Sign Up</h2>
+        {error && <div style={{ color: '#d32f2f', marginBottom: '15px', padding: '10px', backgroundColor: '#ffebee', borderRadius: '4px', border: '1px solid #ffcdd2', fontSize: '0.9rem' }}>{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Sign Up As</label>

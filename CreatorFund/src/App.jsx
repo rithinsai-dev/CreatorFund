@@ -5,21 +5,21 @@ import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
 import Sidebar from './components/Sidebar'
 
-// Admin pages
+
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminRequests from './pages/admin/AdminRequests'
 import AdminCreators from './pages/admin/AdminCreators'
 import AdminCreatorRevenue from './pages/admin/AdminCreatorRevenue'
 import AdminPlatformRevenue from './pages/admin/AdminPlatformRevenue'
 
-// Creator pages
+
 import CreatorDashboard from './pages/creator/CreatorDashboard'
 import MyContent from './pages/creator/MyContent'
 import CreatorRevenue from './pages/creator/CreatorRevenue'
 import SubmitContent from './pages/creator/SubmitContent'
 import ManageRights from './pages/creator/ManageRights'
 
-// Distributor pages
+
 import DistDashboard from './pages/distributor/DistDashboard'
 import Marketplace from './pages/distributor/Marketplace'
 import MyOrders from './pages/distributor/MyOrders'

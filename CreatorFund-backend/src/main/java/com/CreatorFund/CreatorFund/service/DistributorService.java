@@ -144,14 +144,14 @@ public class DistributorService {
 
         content.setSalesCount(content.getSalesCount() != null ? content.getSalesCount() + 1 : 1);
         
-        // Auto-expiry logic: if targetQty is reached, archive the content
+        
         if (content.getTargetQty() != null && content.getSalesCount() >= content.getTargetQty()) {
             content.setContentStatus(DigitalContent.ContentStatus.ARCHIVED);
         }
 
         digitalContentRepository.save(content);
 
-        // Distribute royalties to rights holders
+        
         royaltyService.calculateRoyalties(content, transaction.getRevenueGenerated());
 
         return Map.of("success", true, "licenseKey", licenseKey);

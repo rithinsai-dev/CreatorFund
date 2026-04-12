@@ -107,7 +107,7 @@ public class RightsService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient ownership percentage. Available: " + senderRights.getOwnershipPercentage());
         }
 
-        // Deduct from sender
+        
         BigDecimal remainingPercentage = senderRights.getOwnershipPercentage().subtract(percentage);
         senderRights.setOwnershipPercentage(remainingPercentage);
         if (remainingPercentage.compareTo(BigDecimal.ZERO) == 0) {
@@ -116,7 +116,7 @@ public class RightsService {
         }
         contentRightsRepository.save(senderRights);
 
-        // Add to recipient — create new record or update existing active record
+        
         ContentRights recipientRights = contentRightsRepository.findByDigitalContentAndRightsOwnerAndRightsStatus(
                 content, toUser, ContentRights.RightsStatus.ACTIVE)
                 .orElseGet(() -> {
@@ -134,7 +134,7 @@ public class RightsService {
         recipientRights.setOwnershipPercentage(recipientRights.getOwnershipPercentage().add(percentage));
         contentRightsRepository.save(recipientRights);
 
-        // Record the transfer
+        
         RightsTransfer transfer = RightsTransfer.builder()
                 .digitalContent(content)
                 .previousOwner(fromUser)
