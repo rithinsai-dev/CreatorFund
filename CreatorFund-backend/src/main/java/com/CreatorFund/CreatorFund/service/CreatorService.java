@@ -169,11 +169,13 @@ public class CreatorService {
         digitalContentRepository.save(content);
 
         // Assign 100% rights to the creator by default
+        LocalDateTime now = LocalDateTime.now();
         ContentRights rights = ContentRights.builder()
                 .digitalContent(content)
                 .rightsOwner(creator)
                 .ownershipPercentage(new BigDecimal("100.00"))
-                .rightsStartDate(LocalDateTime.now())
+                .rightsStartDate(now)
+                .rightsEndDate(now.plusYears(1))
                 .rightsStatus(ContentRights.RightsStatus.ACTIVE)
                 .build();
         contentRightsRepository.save(rights);

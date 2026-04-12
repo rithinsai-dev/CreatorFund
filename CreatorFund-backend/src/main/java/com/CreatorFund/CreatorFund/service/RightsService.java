@@ -119,13 +119,17 @@ public class RightsService {
         // Add to recipient — create new record or update existing active record
         ContentRights recipientRights = contentRightsRepository.findByDigitalContentAndRightsOwnerAndRightsStatus(
                 content, toUser, ContentRights.RightsStatus.ACTIVE)
-                .orElse(ContentRights.builder()
-                        .digitalContent(content)
-                        .rightsOwner(toUser)
-                        .ownershipPercentage(BigDecimal.ZERO)
-                        .rightsStartDate(LocalDateTime.now())
-                        .rightsStatus(ContentRights.RightsStatus.ACTIVE)
-                        .build());
+                .orElseGet(() -> {
+                    LocalDateTime now = LocalDateTime.now();
+                    return ContentRights.builder()
+                            .digitalContent(content)
+                            .rightsOwner(toUser)
+                            .ownershipPercentage(BigDecimal.ZERO)
+                            .rightsStartDate(now)
+                            .rightsEndDate(now.plusYears(1))
+                            .rightsStatus(ContentRights.RightsStatus.ACTIVE)
+                            .build();
+                });
 
         recipientRights.setOwnershipPercentage(recipientRights.getOwnershipPercentage().add(percentage));
         contentRightsRepository.save(recipientRights);

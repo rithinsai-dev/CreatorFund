@@ -142,30 +142,35 @@ public class DataInitializer implements CommandLineRunner {
                         .digitalContent(c1).rightsOwner(alice)
                         .ownershipPercentage(new BigDecimal("100.00"))
                         .rightsStartDate(LocalDateTime.of(2023, 3, 15, 0, 0))
+                        .rightsEndDate(LocalDateTime.of(2023, 3, 15, 0, 0).plusYears(1))
                         .rightsStatus(ContentRights.RightsStatus.ACTIVE).build(),
 
                 ContentRights.builder()
                         .digitalContent(c2).rightsOwner(bob)
                         .ownershipPercentage(new BigDecimal("100.00"))
                         .rightsStartDate(LocalDateTime.of(2023, 10, 1, 0, 0))
+                        .rightsEndDate(LocalDateTime.of(2023, 10, 1, 0, 0).plusYears(1))
                         .rightsStatus(ContentRights.RightsStatus.ACTIVE).build(),
 
                 ContentRights.builder()
                         .digitalContent(c3).rightsOwner(alice)
                         .ownershipPercentage(new BigDecimal("100.00"))
                         .rightsStartDate(LocalDateTime.of(2023, 7, 20, 0, 0))
+                        .rightsEndDate(LocalDateTime.of(2023, 7, 20, 0, 0).plusYears(1))
                         .rightsStatus(ContentRights.RightsStatus.ACTIVE).build(),
 
                 ContentRights.builder()
                         .digitalContent(c4).rightsOwner(alice)
                         .ownershipPercentage(new BigDecimal("100.00"))
                         .rightsStartDate(LocalDateTime.of(2024, 1, 1, 0, 0))
+                        .rightsEndDate(LocalDateTime.of(2024, 1, 1, 0, 0).plusYears(1))
                         .rightsStatus(ContentRights.RightsStatus.ACTIVE).build(),
 
                 ContentRights.builder()
                         .digitalContent(c5).rightsOwner(bob)
                         .ownershipPercentage(new BigDecimal("100.00"))
                         .rightsStartDate(LocalDateTime.of(2023, 9, 5, 0, 0))
+                        .rightsEndDate(LocalDateTime.of(2023, 9, 5, 0, 0).plusYears(1))
                         .rightsStatus(ContentRights.RightsStatus.ACTIVE).build()
         ));
 
