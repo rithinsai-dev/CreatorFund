@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Locale;
 
@@ -28,22 +29,27 @@ public class AuthService {
         }
     }
 
+    private Map<String, Object> buildAuthResponse(User user) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("id", user.getId());
+        response.put("name", user.getName());
+        response.put("email", user.getEmail());
+        response.put("organizationName", user.getOrganizationName());
+        response.put("role", user.getRole().name());
+        return response;
+    }
+
     public Map<String, Object> login(String email, String password, String role) {
         User.Role requestedRole = parseRole(role);
-        User user = userRepository.findByEmailAndPassword(email, password)
+        String normalizedEmail = email == null ? null : email.trim().toLowerCase(Locale.ROOT);
+        User user = userRepository.findByEmailAndPassword(normalizedEmail, password)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password"));
 
         if (user.getRole() != requestedRole) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid role for this account");
         }
 
-        return Map.of(
-                "id",    user.getId(),
-                "name",  user.getName(),
-                "email", user.getEmail(),
-                "organizationName", user.getOrganizationName(),
-                "role",  user.getRole().name()
-        );
+        return buildAuthResponse(user);
     }
 
     public Map<String, Object> register(String name, String email, String password, String role, String organizationName) {
@@ -75,12 +81,6 @@ public class AuthService {
 
         User saved = userRepository.save(newUser);
 
-        return Map.of(
-                "id",    saved.getId(),
-                "name",  saved.getName(),
-                "email", saved.getEmail(),
-                "organizationName", saved.getOrganizationName(),
-                "role",  saved.getRole().name()
-        );
+        return buildAuthResponse(saved);
     }
 }
