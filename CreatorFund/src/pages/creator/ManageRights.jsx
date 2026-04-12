@@ -36,7 +36,6 @@ export default function ManageRights({ contentId, onBack }) {
     loadData();
   }, [contentId]);
 
-  // Get logged-in user's ownership percentage
   const savedUser = localStorage.getItem('creatorfund-user');
   const loggedEmail = savedUser ? JSON.parse(savedUser)?.email : '';
   const myRights = rights.find(r => r.ownerEmail === loggedEmail);

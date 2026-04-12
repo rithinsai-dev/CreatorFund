@@ -19,11 +19,11 @@ export const api = {
     return await res.json();
   },
 
-  register: async (name, email, password, role) => {
+  register: async (name, email, password, role, organizationName) => {
     const res = await fetch(`${BASE_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password, role })
+      body: JSON.stringify({ name, email, password, role, organizationName })
     });
     if (!res.ok) throw new Error('Registration failed');
     return await res.json();

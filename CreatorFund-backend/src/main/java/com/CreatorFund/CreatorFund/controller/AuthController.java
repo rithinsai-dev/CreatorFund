@@ -21,7 +21,7 @@ public class AuthController {
 
     // Helper records for requests and responses
     public record LoginRequest(String email, String password, String role) {}
-    public record RegisterRequest(String name, String email, String password, String role) {}
+    public record RegisterRequest(String name, String email, String password, String role, String organizationName) {}
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest request) {
@@ -31,7 +31,13 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(@RequestBody RegisterRequest request) {
-        Map<String, Object> response = authService.register(request.name(), request.email(), request.password(), request.role());
+        Map<String, Object> response = authService.register(
+                request.name(),
+                request.email(),
+                request.password(),
+                request.role(),
+                request.organizationName()
+        );
         return ResponseEntity.ok(response);
     }
 }

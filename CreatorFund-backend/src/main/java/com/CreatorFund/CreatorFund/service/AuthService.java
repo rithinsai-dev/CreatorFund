@@ -41,11 +41,12 @@ public class AuthService {
                 "id",    user.getId(),
                 "name",  user.getName(),
                 "email", user.getEmail(),
+                "organizationName", user.getOrganizationName(),
                 "role",  user.getRole().name()
         );
     }
 
-    public Map<String, Object> register(String name, String email, String password, String role) {
+    public Map<String, Object> register(String name, String email, String password, String role, String organizationName) {
         User.Role requestedRole = parseRole(role);
 
         if (userRepository.findByEmail(email).isPresent()) {
@@ -60,10 +61,15 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password must be at least 6 characters");
         }
 
+        if (organizationName == null || organizationName.trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Organization name is required");
+        }
+
         User newUser = User.builder()
                 .name(name.trim())
                 .email(email.trim().toLowerCase(Locale.ROOT))
                 .password(password)
+                .organizationName(organizationName.trim())
                 .role(requestedRole)
                 .build();
 
@@ -73,6 +79,7 @@ public class AuthService {
                 "id",    saved.getId(),
                 "name",  saved.getName(),
                 "email", saved.getEmail(),
+                "organizationName", saved.getOrganizationName(),
                 "role",  saved.getRole().name()
         );
     }

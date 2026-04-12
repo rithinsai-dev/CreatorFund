@@ -26,7 +26,7 @@ export default function AdminCreatorRevenue() {
       const res = await api.processCreatorPayout(creatorId);
       if (res.success) {
         alert(`Successfully processed ${res.processedCount} royalty payments!`);
-        loadStats(); // Refresh data
+        loadStats(); 
       } else {
         alert(res.message || "Failed to process payout");
       }

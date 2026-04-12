@@ -15,7 +15,6 @@ export default function SubmitContent() {
     e.preventDefault();
     setStatus('submitting');
     try {
-      // Ensure targetQty is an integer
       const payload = {
         ...formData,
         targetQty: parseInt(formData.targetQty, 10) || 0

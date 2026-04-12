@@ -5,12 +5,13 @@ export default function SignupPage({ onSwitchToLogin }) {
   const { register } = useAuth();
   const [role, setRole] = useState('creator');
   const [name, setName] = useState('');
+  const [organizationName, setOrganizationName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await register(name, email, password, role);
+    await register(name, email, password, role, organizationName);
   };
 
   return (
@@ -28,6 +29,16 @@ export default function SignupPage({ onSwitchToLogin }) {
           <div className="form-group">
             <label>Name</label>
             <input type="text" value={name} onChange={(e) => setName(e.target.value)} required placeholder="Satoshi Nakamoto" />
+          </div>
+          <div className="form-group">
+            <label>Organization Name</label>
+            <input
+              type="text"
+              value={organizationName}
+              onChange={(e) => setOrganizationName(e.target.value)}
+              required
+              placeholder="CreatorFund Studios"
+            />
           </div>
           <div className="form-group">
             <label>Email</label>

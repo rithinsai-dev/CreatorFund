@@ -28,9 +28,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const register = async (name, email, password, role) => {
+  const register = async (name, email, password, role, organizationName) => {
     try {
-      const user = await api.register(name, email, password, role);
+      const user = await api.register(name, email, password, role, organizationName);
       setUser(user);
       localStorage.setItem('creatorfund-user', JSON.stringify(user));
     } catch (err) {
