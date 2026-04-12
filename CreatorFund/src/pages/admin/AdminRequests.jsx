@@ -27,6 +27,19 @@ export default function AdminRequests() {
     }
   };
 
+  const handleReject = async (id) => {
+    try {
+      const res = await api.rejectContent(id);
+      if (res.success) {
+        setRequests(prev => prev.filter(r => r.id !== id));
+      } else {
+        alert("Failed to reject content");
+      }
+    } catch (err) {
+      alert("Error rejecting content: " + err.message);
+    }
+  };
+
   return (
     <div>
       <div className="page-header">
@@ -59,7 +72,7 @@ export default function AdminRequests() {
                   <td>
                     <div style={{display:'flex', gap: 5}}>
                       <button className="btn btn-primary btn-sm" onClick={() => handleApprove(r.id)}>Approve</button>
-                      <button className="btn btn-sm">Reject</button>
+                      <button className="btn btn-sm" onClick={() => handleReject(r.id)}>Reject</button>
                     </div>
                   </td>
                 </tr>

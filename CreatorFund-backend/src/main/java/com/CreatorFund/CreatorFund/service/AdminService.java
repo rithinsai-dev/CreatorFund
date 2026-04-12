@@ -94,6 +94,15 @@ public class AdminService {
         }).orElse(false);
     }
 
+    @Transactional
+    public boolean rejectContent(Long contentId) {
+        return digitalContentRepository.findById(contentId).map(c -> {
+            c.setContentStatus(DigitalContent.ContentStatus.INACTIVE);
+            digitalContentRepository.save(c);
+            return true;
+        }).orElse(false);
+    }
+
     @Transactional(readOnly = true)
     public List<Map<String, Object>> getCreatorRevenueStats() {
         return userRepository.findByRole(User.Role.CREATOR).stream()

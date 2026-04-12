@@ -41,6 +41,12 @@ public class AdminController {
         return ResponseEntity.ok(Map.of("success", success));
     }
 
+    @PostMapping("/reject-content")
+    public ResponseEntity<Map<String, Object>> rejectContent(@RequestParam Long contentId) {
+        boolean success = adminService.rejectContent(contentId);
+        return ResponseEntity.ok(Map.of("success", success));
+    }
+
     @GetMapping("/revenue")
     public ResponseEntity<List<Map<String, Object>>> getRevenue() {
         return ResponseEntity.ok(adminService.getCreatorRevenueStats());

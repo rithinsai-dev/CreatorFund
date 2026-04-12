@@ -48,6 +48,12 @@ export const api = {
     });
     return await res.json();
   },
+  rejectContent: async (contentId) => {
+    const res = await fetch(`${BASE_URL}/admin/reject-content?contentId=${contentId}`, {
+      method: 'POST'
+    });
+    return await res.json();
+  },
   getAdminRevenueStats: async () => {
     const res = await fetch(`${BASE_URL}/admin/revenue`);
     return await res.json();
