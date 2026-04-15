@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: creatorfund-backend
+    runtime: docker
+    rootDir: CreatorFund-backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: SPRING_PROFILES_ACTIVE
+        value: default
