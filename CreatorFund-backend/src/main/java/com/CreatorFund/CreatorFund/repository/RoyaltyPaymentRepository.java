@@ -1,6 +1,6 @@
 package com.CreatorFund.CreatorFund.repository;
 
-import com.CreatorFund.CreatorFund.entity.RoyaltyPayment;
+import com.CreatorFund.CreatorFund.model.RoyaltyPayment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

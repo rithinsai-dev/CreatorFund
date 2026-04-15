@@ -1,10 +1,10 @@
 package com.CreatorFund.CreatorFund.service;
 
 import com.CreatorFund.CreatorFund.controller.CreatorController.SubmitContentRequest;
-import com.CreatorFund.CreatorFund.entity.ContentRights;
-import com.CreatorFund.CreatorFund.entity.DigitalContent;
-import com.CreatorFund.CreatorFund.entity.RoyaltyCalculation;
-import com.CreatorFund.CreatorFund.entity.User;
+import com.CreatorFund.CreatorFund.model.ContentRights;
+import com.CreatorFund.CreatorFund.model.DigitalContent;
+import com.CreatorFund.CreatorFund.model.RoyaltyCalculation;
+import com.CreatorFund.CreatorFund.model.User;
 import com.CreatorFund.CreatorFund.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

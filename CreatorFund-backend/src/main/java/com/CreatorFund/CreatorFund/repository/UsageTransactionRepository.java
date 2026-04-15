@@ -1,7 +1,7 @@
 package com.CreatorFund.CreatorFund.repository;
 
-import com.CreatorFund.CreatorFund.entity.UsageTransaction;
-import com.CreatorFund.CreatorFund.entity.User;
+import com.CreatorFund.CreatorFund.model.UsageTransaction;
+import com.CreatorFund.CreatorFund.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

@@ -14,16 +14,15 @@ public class CleanSweepController {
     @GetMapping("/clean-sweep")
     public String cleanSweep() {
         try {
-            
-            jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS = 0");
-            jdbcTemplate.execute("DROP TABLE IF EXISTS `RoyaltyPayment`");
-            jdbcTemplate.execute("DROP TABLE IF EXISTS `RoyaltyCalculation`");
-            jdbcTemplate.execute("DROP TABLE IF EXISTS `RightsTransfer`");
-            jdbcTemplate.execute("DROP TABLE IF EXISTS `ContentRights`");
-            jdbcTemplate.execute("DROP TABLE IF EXISTS `UsageTransaction`");
-            jdbcTemplate.execute("DROP TABLE IF EXISTS `DigitalContent`");
-            jdbcTemplate.execute("DROP TABLE IF EXISTS `User`");
-            jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS = 1");
+            jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY FALSE");
+            jdbcTemplate.execute("DROP TABLE IF EXISTS \"royalty_payment\"");
+            jdbcTemplate.execute("DROP TABLE IF EXISTS \"royalty_calculation\"");
+            jdbcTemplate.execute("DROP TABLE IF EXISTS \"rights_transfer\"");
+            jdbcTemplate.execute("DROP TABLE IF EXISTS \"content_rights\"");
+            jdbcTemplate.execute("DROP TABLE IF EXISTS \"usage_transaction\"");
+            jdbcTemplate.execute("DROP TABLE IF EXISTS \"digital_content\"");
+            jdbcTemplate.execute("DROP TABLE IF EXISTS \"user\"");
+            jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY TRUE");
             return "All tables dropped successfully. Please restart the app. DataInitializer will seed fresh data.";
         } catch (Exception e) {
             return "Error during clean sweep: " + e.getMessage();

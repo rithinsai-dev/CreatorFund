@@ -1,9 +1,9 @@
 package com.CreatorFund.CreatorFund.service;
 
 import com.CreatorFund.CreatorFund.controller.DistributorController.PurchaseRequest;
-import com.CreatorFund.CreatorFund.entity.DigitalContent;
-import com.CreatorFund.CreatorFund.entity.UsageTransaction;
-import com.CreatorFund.CreatorFund.entity.User;
+import com.CreatorFund.CreatorFund.model.DigitalContent;
+import com.CreatorFund.CreatorFund.model.UsageTransaction;
+import com.CreatorFund.CreatorFund.model.User;
 import com.CreatorFund.CreatorFund.repository.DigitalContentRepository;
 import com.CreatorFund.CreatorFund.repository.UsageTransactionRepository;
 import com.CreatorFund.CreatorFund.repository.UserRepository;

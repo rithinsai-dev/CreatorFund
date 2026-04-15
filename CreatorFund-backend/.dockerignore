@@ -1,0 +1,9 @@
+target/
+.idea/
+.m2/
+*.iws
+*.iml
+*.ipr
+.vscode/
+.git/
+data/

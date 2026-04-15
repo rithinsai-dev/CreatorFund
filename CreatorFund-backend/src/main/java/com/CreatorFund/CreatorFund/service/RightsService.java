@@ -1,9 +1,9 @@
 package com.CreatorFund.CreatorFund.service;
 
-import com.CreatorFund.CreatorFund.entity.ContentRights;
-import com.CreatorFund.CreatorFund.entity.DigitalContent;
-import com.CreatorFund.CreatorFund.entity.RightsTransfer;
-import com.CreatorFund.CreatorFund.entity.User;
+import com.CreatorFund.CreatorFund.model.ContentRights;
+import com.CreatorFund.CreatorFund.model.DigitalContent;
+import com.CreatorFund.CreatorFund.model.RightsTransfer;
+import com.CreatorFund.CreatorFund.model.User;
 import com.CreatorFund.CreatorFund.repository.ContentRightsRepository;
 import com.CreatorFund.CreatorFund.repository.DigitalContentRepository;
 import com.CreatorFund.CreatorFund.repository.RightsTransferRepository;

@@ -1,6 +1,6 @@
 package com.CreatorFund.CreatorFund.service;
 
-import com.CreatorFund.CreatorFund.entity.User;
+import com.CreatorFund.CreatorFund.model.User;
 import com.CreatorFund.CreatorFund.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

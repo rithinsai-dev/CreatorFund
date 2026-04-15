@@ -1,4 +1,4 @@
-package com.CreatorFund.CreatorFund.entity;
+package com.CreatorFund.CreatorFund.model;
 
 import jakarta.persistence.*;
 import lombok.Data;

@@ -1,8 +1,8 @@
 package com.CreatorFund.CreatorFund.repository;
 
-import com.CreatorFund.CreatorFund.entity.ContentRights;
-import com.CreatorFund.CreatorFund.entity.DigitalContent;
-import com.CreatorFund.CreatorFund.entity.User;
+import com.CreatorFund.CreatorFund.model.ContentRights;
+import com.CreatorFund.CreatorFund.model.DigitalContent;
+import com.CreatorFund.CreatorFund.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
